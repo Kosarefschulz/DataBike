@@ -74,7 +74,7 @@ export function SearchBar({ large = false }: { large?: boolean }) {
           onBlur={() => setTimeout(() => setIsOpen(false), 200)}
           placeholder='Suche nach "Rennrad in Nippes" oder "Geschäftsführer Müller"...'
           className={cn(
-            "flex-1 bg-transparent outline-none placeholder:text-slate-400",
+            "flex-1 bg-transparent outline-none placeholder:text-slate-400 text-slate-900 caret-blue-600",
             large ? "py-5 px-4 text-lg" : "py-3 px-3 text-base"
           )}
         />
