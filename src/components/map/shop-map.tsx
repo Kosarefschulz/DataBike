@@ -250,8 +250,17 @@ export function ShopMap({ shops, selectedShop, onShopSelect, routeShops = [] }: 
         .shop-popup .leaflet-popup-tip {
           box-shadow: 0 4px 20px rgba(0,0,0,0.15);
         }
+        .leaflet-container {
+          z-index: 1 !important;
+        }
+        .leaflet-pane {
+          z-index: 1 !important;
+        }
+        .leaflet-top, .leaflet-bottom {
+          z-index: 500 !important;
+        }
       `}</style>
-      <div ref={containerRef} className="w-full h-full rounded-xl overflow-hidden" />
+      <div ref={containerRef} className="w-full h-full rounded-xl overflow-hidden relative z-0" />
     </>
   );
 }
