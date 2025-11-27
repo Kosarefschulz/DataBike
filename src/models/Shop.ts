@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 
-export interface IShop extends Document {
+export interface IShop {
   name: string;
   slug: string;
   typ: 'Fahrrad' | 'Baby';
@@ -25,10 +25,12 @@ export interface IShop extends Document {
   createdAt: Date;
   updatedAt: Date;
   createdBy: string;
-  isCustom: boolean; // true wenn vom User hinzugefügt
+  isCustom: boolean;
 }
 
-const ShopSchema = new Schema<IShop>(
+export interface IShopDocument extends IShop, Document {}
+
+const ShopSchema = new Schema(
   {
     name: { type: String, required: true, index: true },
     slug: { type: String, required: true, unique: true },
@@ -76,22 +78,19 @@ ShopSchema.index({ typ: 1, prioritaet: 1 });
 ShopSchema.index({ stadtteil: 1, prioritaet: 1 });
 ShopSchema.index({ route: 1 });
 
-// Generate slug before saving
-ShopSchema.pre('save', function(next) {
-  if (!this.slug || this.isModified('name')) {
-    this.slug = this.name
-      .toLowerCase()
-      .replace(/[äöüß]/g, (match) => {
-        const map: Record<string, string> = { 'ä': 'ae', 'ö': 'oe', 'ü': 'ue', 'ß': 'ss' };
-        return map[match] || match;
-      })
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '');
-  }
-  next();
-});
+// Helper function to generate slug
+export function generateSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[äöüß]/g, (match: string) => {
+      const map: Record<string, string> = { 'ä': 'ae', 'ö': 'oe', 'ü': 'ue', 'ß': 'ss' };
+      return map[match] || match;
+    })
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+}
 
 // Prevent model recompilation in development
-const Shop: Model<IShop> = mongoose.models.Shop || mongoose.model<IShop>('Shop', ShopSchema);
+const Shop: Model<IShopDocument> = mongoose.models.Shop || mongoose.model<IShopDocument>('Shop', ShopSchema);
 
 export default Shop;
