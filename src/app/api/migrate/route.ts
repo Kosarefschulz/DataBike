@@ -32,34 +32,43 @@ export async function POST(request: NextRequest) {
       await Shop.deleteMany({});
     }
 
-    // Prepare data for insertion
-    const shopsToInsert = localShops.map(shop => ({
-      name: shop.name,
-      slug: shop.slug,
-      typ: shop.typ,
-      prioritaet: shop.prioritaet,
-      adresse: shop.adresse,
-      stadtteil: shop.stadtteil,
-      plz: shop.plz || '',
-      telefon: shop.telefon || '-',
-      email: shop.email || '-',
-      website: shop.website || '-',
-      geschaeftsfuehrer: shop.geschaeftsfuehrer || '-',
-      bewertung: shop.bewertung || 0,
-      anzahlBewertungen: shop.anzahlBewertungen || 0,
-      schwerpunkte: shop.schwerpunkte || [],
-      marken: shop.marken || [],
-      route: shop.route || 0,
-      lat: shop.lat || 0,
-      lng: shop.lng || 0,
-      notizen: '',
-      status: 'aktiv',
-      isCustom: false,
-      createdBy: 'migration',
-    }));
+    // Prepare data for insertion - deduplicate by slug
+    const seenSlugs = new Set<string>();
+    const shopsToInsert = localShops
+      .filter(shop => {
+        if (seenSlugs.has(shop.slug)) {
+          return false;
+        }
+        seenSlugs.add(shop.slug);
+        return true;
+      })
+      .map(shop => ({
+        name: shop.name,
+        slug: shop.slug,
+        typ: shop.typ,
+        prioritaet: shop.prioritaet,
+        adresse: shop.adresse,
+        stadtteil: shop.stadtteil,
+        plz: shop.plz || '',
+        telefon: shop.telefon || '-',
+        email: shop.email || '-',
+        website: shop.website || '-',
+        geschaeftsfuehrer: shop.geschaeftsfuehrer || '-',
+        bewertung: shop.bewertung || 0,
+        anzahlBewertungen: shop.anzahlBewertungen || 0,
+        schwerpunkte: shop.schwerpunkte || [],
+        marken: shop.marken || [],
+        route: shop.route || 0,
+        lat: shop.lat || 0,
+        lng: shop.lng || 0,
+        notizen: '',
+        status: 'aktiv',
+        isCustom: false,
+        createdBy: 'migration',
+      }));
 
     // Insert all shops
-    const result = await Shop.insertMany(shopsToInsert);
+    const result = await Shop.insertMany(shopsToInsert, { ordered: false })
 
     return NextResponse.json({
       success: true,
