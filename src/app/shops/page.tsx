@@ -15,10 +15,10 @@ import {
   Globe,
   Building2,
   Users,
-  Navigation,
   ChevronDown,
   ChevronUp,
-  Check
+  Plus,
+  Baby
 } from 'lucide-react';
 import { shops, getUniqueValues, getStats } from '@/lib/shops';
 import { Shop } from '@/types/shop';
@@ -191,9 +191,9 @@ export default function ShopsPage() {
               </p>
             </div>
 
-            {/* Search */}
+            {/* Search and Actions */}
             <div className="flex items-center gap-3">
-              <div className="relative flex-1 md:w-96">
+              <div className="relative flex-1 md:w-80">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <input
                   type="text"
@@ -211,6 +211,15 @@ export default function ShopsPage() {
                   </button>
                 )}
               </div>
+
+              {/* Add New Shop Button */}
+              <Link
+                href="/admin"
+                className="hidden md:flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-colors"
+              >
+                <Plus className="w-5 h-5" />
+                Neuer Laden
+              </Link>
 
               {/* Mobile Filter Toggle */}
               <button
@@ -583,6 +592,25 @@ export default function ShopsPage() {
 }
 
 function ShopCard({ shop }: { shop: Shop }) {
+  const [isInRoute, setIsInRoute] = useState(false);
+
+  // Check if shop is in route (localStorage)
+  useEffect(() => {
+    const routeShops = JSON.parse(localStorage.getItem('routeShops') || '[]');
+    setIsInRoute(routeShops.some((s: Shop) => s.id === shop.id));
+  }, [shop.id]);
+
+  const addToRoute = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const routeShops = JSON.parse(localStorage.getItem('routeShops') || '[]');
+    if (!routeShops.some((s: Shop) => s.id === shop.id)) {
+      routeShops.push(shop);
+      localStorage.setItem('routeShops', JSON.stringify(routeShops));
+      setIsInRoute(true);
+    }
+  };
+
   return (
     <Link
       href={`/shop/${shop.slug}`}
@@ -592,13 +620,13 @@ function ShopCard({ shop }: { shop: Shop }) {
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className={cn(
-            "w-12 h-12 rounded-xl flex items-center justify-center",
-            shop.typ === 'Baby' ? "bg-pink-100" : "bg-blue-100"
+            "w-10 h-10 rounded-lg flex items-center justify-center",
+            shop.typ === 'Baby' ? "bg-slate-100" : "bg-slate-100"
           )}>
             {shop.typ === 'Baby' ? (
-              <span className="text-xl">👶</span>
+              <Baby className="w-5 h-5 text-slate-600" />
             ) : (
-              <Bike className="w-6 h-6 text-blue-600" />
+              <Bike className="w-5 h-5 text-slate-600" />
             )}
           </div>
           <div>
@@ -617,53 +645,52 @@ function ShopCard({ shop }: { shop: Shop }) {
       {/* Geschäftsführer */}
       {shop.geschaeftsfuehrer && shop.geschaeftsfuehrer !== '-' && (
         <div className="flex items-center gap-2 mb-3 text-sm">
-          <Building2 className="w-4 h-4 text-violet-500" />
-          <span className="text-slate-700 font-medium">{shop.geschaeftsfuehrer}</span>
+          <span className="text-slate-700">{shop.geschaeftsfuehrer}</span>
         </div>
       )}
 
       {/* Contact Info */}
-      <div className="space-y-2 mb-4">
-        <div className="flex items-center gap-2 text-sm text-slate-600">
+      <div className="space-y-1.5 mb-4 text-sm text-slate-600">
+        <div className="flex items-center gap-2">
           <MapPin className="w-4 h-4 text-slate-400 flex-shrink-0" />
           <span className="truncate">{shop.adresse}</span>
         </div>
         {shop.email && shop.email !== '-' && (
-          <div className="flex items-center gap-2 text-sm text-slate-600">
-            <Mail className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+          <div className="flex items-center gap-2">
+            <Mail className="w-4 h-4 text-slate-400 flex-shrink-0" />
             <span className="truncate">{shop.email}</span>
-          </div>
-        )}
-        {shop.telefon && shop.telefon !== '-' && (
-          <div className="flex items-center gap-2 text-sm text-slate-600">
-            <Phone className="w-4 h-4 text-slate-400 flex-shrink-0" />
-            <span>{shop.telefon}</span>
           </div>
         )}
       </div>
 
       {/* Footer */}
       <div className="flex items-center justify-between pt-3 border-t border-slate-100">
-        <div className="flex items-center gap-2">
-          {shop.bewertung > 0 ? (
+        <div className="flex items-center gap-3">
+          {shop.bewertung > 0 && (
             <div className="flex items-center gap-1">
               <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
               <span className="text-sm font-medium text-slate-900">{shop.bewertung}</span>
-              <span className="text-sm text-slate-500">({shop.anzahlBewertungen})</span>
             </div>
-          ) : (
-            <span className="text-sm text-slate-400">Keine Bewertung</span>
           )}
-        </div>
-
-        <div className="flex items-center gap-2">
-          {shop.website && shop.website !== '-' && (
-            <Globe className="w-4 h-4 text-blue-500" />
-          )}
-          <span className="text-xs bg-slate-100 px-2 py-1 rounded text-slate-500">
+          <span className="text-xs text-slate-400">
             Route {shop.route}
           </span>
         </div>
+
+        {/* Add to Route Button */}
+        <button
+          onClick={addToRoute}
+          disabled={isInRoute}
+          className={cn(
+            "flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors",
+            isInRoute
+              ? "bg-slate-100 text-slate-400 cursor-default"
+              : "bg-blue-50 text-blue-600 hover:bg-blue-100"
+          )}
+        >
+          <Plus className="w-3.5 h-3.5" />
+          {isInRoute ? 'In Route' : 'Route'}
+        </button>
       </div>
     </Link>
   );

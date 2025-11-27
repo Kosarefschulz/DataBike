@@ -69,6 +69,7 @@ export function getStats() {
   const mitGF = shops.filter(s => s.geschaeftsfuehrer && s.geschaeftsfuehrer !== '-').length;
   const prioA = shops.filter(s => s.prioritaet === 'A').length;
   const prioB = shops.filter(s => s.prioritaet === 'B').length;
+  const prioC = shops.filter(s => s.prioritaet === 'C').length;
 
-  return { total, fahrrad, baby, mitEmail, mitGF, prioA, prioB };
+  return { total, fahrrad, baby, mitEmail, mitGF, prioA, prioB, prioC };
 }

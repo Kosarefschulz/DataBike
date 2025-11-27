@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { Bike, LayoutDashboard, Map, Route, Settings, Menu, X, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
@@ -17,13 +17,8 @@ const navItems = [
 
 export function Navbar() {
   const pathname = usePathname();
-  const router = useRouter();
   const { logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  const handleStartClick = () => {
-    router.push('/shops');
-  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 glass border-b border-slate-200/50">
@@ -69,12 +64,6 @@ export function Navbar() {
             >
               <LogOut className="w-5 h-5" />
             </button>
-            <button
-              onClick={handleStartClick}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
-            >
-              Jetzt starten
-            </button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -115,18 +104,9 @@ export function Navbar() {
               <button
                 onClick={() => {
                   setMobileMenuOpen(false);
-                  router.push('/shops');
-                }}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg text-sm font-medium transition-colors"
-              >
-                Jetzt starten
-              </button>
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
                   logout();
                 }}
-                className="w-full flex items-center justify-center gap-2 mt-2 px-4 py-3 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg text-sm font-medium transition-colors"
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg text-sm font-medium transition-colors"
               >
                 <LogOut className="w-4 h-4" />
                 Abmelden
