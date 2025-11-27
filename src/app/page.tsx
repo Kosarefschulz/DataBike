@@ -1,13 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { getStats, shops } from '@/lib/shops';
 import { Shop } from '@/types/shop';
 import {
   Bike,
   Mail,
-  Building2,
   Star,
   ArrowRight,
   Plus,
@@ -228,24 +227,6 @@ export default function Home() {
 }
 
 function ShopRow({ shop }: { shop: Shop }) {
-  const [isInRoute, setIsInRoute] = useState(false);
-
-  useEffect(() => {
-    const routeShops = JSON.parse(localStorage.getItem('routeShops') || '[]');
-    setIsInRoute(routeShops.some((s: Shop) => s.id === shop.id));
-  }, [shop.id]);
-
-  const addToRoute = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const routeShops = JSON.parse(localStorage.getItem('routeShops') || '[]');
-    if (!routeShops.some((s: Shop) => s.id === shop.id)) {
-      routeShops.push(shop);
-      localStorage.setItem('routeShops', JSON.stringify(routeShops));
-      setIsInRoute(true);
-    }
-  };
-
   return (
     <Link
       href={`/shop/${shop.slug}`}
@@ -294,21 +275,6 @@ function ShopRow({ shop }: { shop: Shop }) {
             <span className="text-sm text-slate-600">{shop.bewertung}</span>
           </div>
         )}
-
-        {/* Add to Route */}
-        <button
-          onClick={addToRoute}
-          disabled={isInRoute}
-          className={cn(
-            "flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors",
-            isInRoute
-              ? "bg-slate-100 text-slate-400"
-              : "bg-blue-50 text-blue-600 hover:bg-blue-100"
-          )}
-        >
-          <Plus className="w-3.5 h-3.5" />
-          {isInRoute ? 'In Route' : 'Route'}
-        </button>
       </div>
     </Link>
   );

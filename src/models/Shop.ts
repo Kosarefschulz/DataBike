@@ -1,5 +1,14 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 
+export interface IVertrieb {
+  interesse: 'ja' | 'nein' | 'vielleicht' | null;
+  terminDatum: Date | null;
+  budgetVorhanden: 'ja' | 'nein' | 'unbekannt' | null;
+  entscheiderGesprochen: boolean | null;
+  naechsterSchritt: string;
+  zuletztAktualisiert: Date | null;
+}
+
 export interface IShop {
   name: string;
   slug: string;
@@ -26,6 +35,7 @@ export interface IShop {
   updatedAt: Date;
   createdBy: string;
   isCustom: boolean;
+  vertrieb: IVertrieb;
 }
 
 export interface IShopDocument extends IShop, Document {}
@@ -59,6 +69,22 @@ const ShopSchema = new Schema(
     letzterKontakt: { type: Date, default: null },
     createdBy: { type: String, default: 'system' },
     isCustom: { type: Boolean, default: false },
+    vertrieb: {
+      interesse: {
+        type: String,
+        enum: ['ja', 'nein', 'vielleicht', null],
+        default: null
+      },
+      terminDatum: { type: Date, default: null },
+      budgetVorhanden: {
+        type: String,
+        enum: ['ja', 'nein', 'unbekannt', null],
+        default: null
+      },
+      entscheiderGesprochen: { type: Boolean, default: null },
+      naechsterSchritt: { type: String, default: '' },
+      zuletztAktualisiert: { type: Date, default: null }
+    },
   },
   {
     timestamps: true,

@@ -1,5 +1,15 @@
+export interface Vertrieb {
+  interesse: 'ja' | 'nein' | 'vielleicht' | null;
+  terminDatum: string | null;
+  budgetVorhanden: 'ja' | 'nein' | 'unbekannt' | null;
+  entscheiderGesprochen: boolean | null;
+  naechsterSchritt: string;
+  zuletztAktualisiert: string | null;
+}
+
 export interface Shop {
   id: number;
+  _id?: string;
   slug: string;
   name: string;
   typ: 'Fahrrad' | 'Baby';
@@ -19,6 +29,7 @@ export interface Shop {
   geschaeftsfuehrer: string;
   marken: string[];
   schwerpunkte: string[];
+  vertrieb?: Vertrieb;
 }
 
 export interface FilterState {
