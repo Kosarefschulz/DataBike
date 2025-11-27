@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Bike, LayoutDashboard, Map, Route, Menu, X, LogOut } from 'lucide-react';
+import { Bike, LayoutDashboard, Map, Route, Settings, Menu, X, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -12,6 +12,7 @@ const navItems = [
   { href: '/shops', label: 'Läden', icon: Bike },
   { href: '/map', label: 'Karte', icon: Map },
   { href: '/routenplaner', label: 'Routenplaner', icon: Route },
+  { href: '/admin', label: 'Admin', icon: Settings },
 ];
 
 export function Navbar() {
